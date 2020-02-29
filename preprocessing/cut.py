@@ -26,8 +26,8 @@ jihe=[]
 # print(absX * (absX > 200))
 print(8*np.mean(absX))
 print(absX.shape)
-xuxiaojian,absX=cv2.threshold(absX, 0, 255, cv2.THRESH_OTSU)
-print(xuxiaojian) #测试图：absX边缘检测，mask阈值
+ret,absX=cv2.threshold(absX, 0, 255, cv2.THRESH_OTSU)
+print(ret) #测试图：absX边缘检测，mask阈值
 plt.imshow(absX,cmap="gray")
 plt.show() #测试图：absX边缘检测，mask阈值
 # plt.imshow(mask,cmap="gray"),plt.title('原始图像'), plt.axis('off') #坐标轴关闭
@@ -38,7 +38,7 @@ bound_up_x, bound_down_x, bound_up_y, bound_down_y = [], [], [], []
 for i in range (w):
     y_min, y_max = 0, h-1
     for j in range (h):
-        if absX[j, i] > xuxiaojian:
+        if absX[j, i] > ret:
             if j < h // 2 and j > y_min:
                 y_min = j
             if j > h // 2 and j < y_max:

@@ -23,7 +23,7 @@ def edge_detectio(grayImage):
 def get_bound_piont(absX):
     h, w=absX.shape
     ret,absX=cv2.threshold(absX, 0, 255, cv2.THRESH_OTSU)
-    # print(xuxiaojian) #测试图：absX边缘检测，mask阈值
+    # print(ret) #测试图：absX边缘检测，mask阈值
     # plt.imshow(absX)
     # plt.show()
     t, t1 =0, h-1
@@ -31,7 +31,7 @@ def get_bound_piont(absX):
     for i in range (w):
         y_min, y_max = 0, h-1
         for j in range (h):
-            if absX[j, i] > xuxiaojian:
+            if absX[j, i] > ret:
                 if j < h // 2 and j > y_min:
                     y_min = j
                 if j > h // 2 and j < y_max:
