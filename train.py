@@ -58,12 +58,10 @@ def batch_loader(data, labels, batch_size=64):
         yield data[batch_permutation], labels[batch_permutation//img_per_class]
 
 
-"改之后的（小改）"
+"改之后的）"
 def batch_loader(data, labels, batch_size=64):
     data_classes, img_per_class, h, w, c = data.shape
     data_length = data_classes * img_per_class
-    data = train_data.reshape((data_length, h, w, c))
-    data = train_data.reshape(data_classes,img_per_class,h,w,c)
     permutation = np.random.permutation(data_classes)
     for i in range(0, data_classes, batch_size):
         batch_permutation = permutation[i: i+batch_size]
