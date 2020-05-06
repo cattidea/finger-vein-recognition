@@ -243,6 +243,8 @@ for i in range(len(test_labels)):
 
 '''ROC曲线'''
 data = tf.reshape(matrix,(len(test_labels),IMG_PER_CLASS,128))
+
+'''类内距离：用的距离矩阵求取的，128*15（6个中任选两个）'''
 in_distance = []
 for i in range(data.shape[0]):
     dot_product=tf.cast(tf.matmul(data[i], tf.transpose(data[i])),float)
@@ -257,6 +259,7 @@ for i in range(data.shape[0]):
         if distances[i]>0:
             in_distance.append(distances[i])
 in_distance = np.array(in_distance)
+'''类间距离：每个样本与其他类间任取3个'''
 out_distance = []
 for i in range(data.shape[0]):
     for j in range(data.shape[1]):
