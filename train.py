@@ -10,7 +10,6 @@ import math
 import imgaug as ia
 import imgaug.augmenters as iaa
 from triplet_model.triplet_loss import batch_hard_triplet_loss
-from triplet_model.recorder import
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 gpus = tf.config.experimental.list_physical_devices(device_type='GPU')
