@@ -15,7 +15,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 gpus = tf.config.experimental.list_physical_devices(device_type='GPU')
 cpus = tf.config.experimental.list_physical_devices(device_type='CPU')
 
-path="data\Shandong University"
+
 DATA_LENGTH,IMG_HEIGHT, IMG_WIDTH, IMG_CHANNEL = 2952,300,100, 1
 IMG_PER_CLASS=6
 CLASSES=123*4
@@ -23,7 +23,6 @@ TRAIN_RATE=0.8
 
 '''read_data'''
 CACHE_FILE="data/FV_data_cache.h5"
-CACHE_FILE_labels="data/labels_cache.h5"
 if not os.path.exists(CACHE_FILE):
     print("未发现处理好的数据文件，正在处理...")
     print(data.shape)
