@@ -23,7 +23,7 @@ def edge_detectio(grayImage):
 def get_bound_piont(absX):
     h, w=absX.shape
     ret,absX=cv2.threshold(absX, 0, 255, cv2.THRESH_OTSU)
-    plt.imshow(absX,cmap='gray')
+    # plt.imshow(absX,cmap='gray')
     # plt.show()
     t, t1 =0, h-1
     bound_up_x, bound_down_x, bound_up_y, bound_down_y = [], [], [], []
@@ -243,16 +243,9 @@ def per_test(img_path):
     theta,w_c,h_c=get_theta(k,b,w)
     img=Rotating_picture(img,theta,h_c,w_c)
     plt.imshow(img,cmap='gray')
-    # grayImage = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # plt.figure()
-    # absX1,h,w = edge_detectio(grayImage)
-    # bound_up_x, bound_down_x, bound_up_y, bound_down_y=get_bound_piont(absX1)
-    # plt.imshow(img,cmap='gray')
     Y_max, Y_min=Vertical_boundary(-theta, bound_down_x,bound_down_y,bound_up_x,bound_up_y,w_c,h_c)
     cropped = img[Y_max:Y_min, :]
-    # cv2.imwrite('pictures/5.jpg',cropped)
     X_min,X_max=Horizontal_boundary(cropped)
-    # ncrease_contrast(img)
     cropped = img[Y_max:Y_min, X_min:X_max]
     cropped = gray_normalization(cropped)
     cropped = cv2.resize(cropped, (320,128))
