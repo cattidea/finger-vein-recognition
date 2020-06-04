@@ -16,7 +16,7 @@ gpus = tf.config.experimental.list_physical_devices(device_type='GPU')
 cpus = tf.config.experimental.list_physical_devices(device_type='CPU')
 
 
-DATA_LENGTH,IMG_HEIGHT, IMG_WIDTH, IMG_CHANNEL = 2952,300,100, 1
+DATA_LENGTH,IMG_HEIGHT, IMG_WIDTH, IMG_CHANNEL = 2952,320,128, 1
 IMG_PER_CLASS=6
 CLASSES=123*4
 TRAIN_RATE=0.8
@@ -45,30 +45,28 @@ test_labels = labels[permutation[int(TRAIN_RATE*CLASSES):]]
 train_data=train_data/255
 test_data=test_data/255
 
-"未改动"
-def batch_loader(data, labels, batch_size=64):
-    data_classes, img_per_class, h, w, c = data.shape
-    data_length = data_classes * img_per_class
-    data = data.reshape((data_length, h, w, c))
-    permutation = np.random.permutation(data_length)
-    for i in range(0, data_length, batch_size):
-        batch_permutation = permutation[i: i+batch_size]
-        yield data[batch_permutation], labels[batch_permutation//img_per_class]
 
-
-"改之后的）"
+'''batch_laoder'''
 def batch_loader(data, labels, batch_size=64):
     data_classes, img_per_class, h, w, c = data.shape
     data_length = data_classes * img_per_class
     permutation = np.random.permutation(data_classes)
     for i in range(0, data_classes, batch_size):
         batch_permutation = permutation[i: i+batch_size]
-        data_ = data[batch_permutation].reshape((batch_size*img_per_class,h, w, c))
-        labels_= [val for val in labels[batch_permutation] for i in range(img_per_class)]
-        labels_=np.array(labels_)
+        mini_classes = permutation[i: i+batch_size].shape[0]
+        data_ = data[batch_permutation].reshape((mini_classes*img_per_class,h, w, c))
+        labels_ = labels[batch_permutation].repeat(IMG_PER_CLASS)
         yield data_, labels_
 
-'''shujukuozheng'''
+'''在线数据扩增'''
+def amplify(X):
+    data_length = X.shape[0]
+    flip_methods = [lambda _: _]
+    method_indices = np.random.choice(len(flip_methods), DATA_LENGTH)
+    for idx in range(data_length):
+        flip_method = flip_methods[method_indices[idx]]
+        X[idx] = flip_method(X[idx])
+    return X
 sometimes = lambda aug: iaa.Sometimes(0.5, aug)
 aug = iaa.Sequential(
     [
@@ -106,14 +104,6 @@ aug = iaa.Sequential(
     random_order=True
 )
 
-def amplify(X):
-    data_length = X.shape[0]
-    flip_methods = [lambda _: _]
-    method_indices = np.random.choice(len(flip_methods), DATA_LENGTH)
-    for idx in range(data_length):
-        flip_method = flip_methods[method_indices[idx]]
-        X[idx] = flip_method(X[idx])
-    return X
 
 '''网络结构'''
 num_epoch = 100
@@ -195,7 +185,6 @@ def save_csv(test_labels,test_data):
         id.append(i)
     index=np.array(index)
     id=np.array(id)
-#     print(test_data[0].shape)
     for j in range(len(index)):
         embeddings=model(tf.cast(test_data[j],float))
         embeddings=tf.reduce_mean(embeddings,axis=0)
@@ -291,9 +280,10 @@ for k in range(len(thresld)):
     FAR.append(far)
     if (abs(frr-far)<0.01):
         eer = abs(frr+far)/2
-#         print(thresld[k])
-plt.plot(FAR,FRR,'-',label='FRR')
-# plt.plot(thresld,FAR,'+-',label='FAR')
+        print("阈值:",thresld[k])
+plt.plot(FAR,FRR,'-',label='SD-ROC')
+plt.xlabel("FAR")
+plt.ylabel("FRR")
 plt.grid(True)
 plt.legend(bbox_to_anchor=(1.0,1.0),loc=1,borderaxespad=0)
 plt.show()
